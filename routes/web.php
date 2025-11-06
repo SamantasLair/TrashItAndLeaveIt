@@ -19,6 +19,11 @@ use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\BansusController;
 use App\Http\Controllers\BookingController;
 
+//Welcome
+Route::get('/welcome', function(){
+    return view('welcome');
+});
+
 // Guest routes
 Route::middleware('guest')->group(function () {
     Route::get('/', function () {
