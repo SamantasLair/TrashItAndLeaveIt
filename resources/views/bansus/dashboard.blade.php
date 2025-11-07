@@ -1,4 +1,3 @@
-{{-- resources/views/bansus/dashboard.blade.php --}}
 @extends('layouts.dashboard')
 
 @section('title', 'Dashboard Bansus')
@@ -47,7 +46,7 @@
                             <div class="flex-1">
                                 <div class="flex items-center space-x-2">
                                     <span class="px-2 py-1 text-xs font-semibold rounded bg-blue-100 text-blue-800">
-                                        {{ $booking->ruangan }}
+                                        {{ $booking->lab->nama ?? 'Lab Dihapus' }}
                                     </span>
                                     @if($booking->status === 'pending')
                                         <span class="px-2 py-1 text-xs font-semibold rounded bg-yellow-100 text-yellow-800">
@@ -91,7 +90,7 @@
                             <div class="flex-1">
                                 <div class="flex items-center space-x-2">
                                     <span class="px-2 py-1 text-xs font-semibold rounded bg-blue-100 text-blue-800">
-                                        {{ $booking->ruangan }}
+                                        {{ $booking->lab->nama ?? 'Lab Dihapus' }}
                                     </span>
                                     <span class="text-xs text-gray-600">{{ $booking->waktu }}</span>
                                 </div>

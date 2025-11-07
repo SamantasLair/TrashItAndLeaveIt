@@ -1,5 +1,3 @@
-
-{{-- resources/views/mahasiswa/booking/create.blade.php --}}
 @extends('layouts.dashboard')
 
 @section('title', 'Booking Baru')
@@ -21,11 +19,13 @@
             @csrf
 
             <div>
-                <label for="ruangan" class="block text-sm font-medium text-gray-700">Ruangan <span class="text-red-500">*</span></label>
-                <select name="ruangan" id="ruangan" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                <label for="lab_id" class="block text-sm font-medium text-gray-700">Ruangan <span class="text-red-500">*</span></label>
+                <select name="lab_id" id="lab_id" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     <option value="">-- Pilih Ruangan --</option>
-                    @foreach($ruangan as $r)
-                        <option value="{{ $r }}" {{ old('ruangan') === $r ? 'selected' : '' }}>{{ $r }}</option>
+                    @foreach($labs as $lab)
+                        <option value="{{ $lab->id }}" {{ old('lab_id') == $lab->id ? 'selected' : '' }}>
+                            {{ $lab->nama }} (Kapasitas: {{ $lab->kapasitas }} orang)
+                        </option>
                     @endforeach
                 </select>
             </div>
@@ -67,19 +67,18 @@
 </div>
 
 <script>
-    // Check availability when fields change
-    const ruanganSelect = document.getElementById('ruangan');
+    const labSelect = document.getElementById('lab_id');
     const tanggalInput = document.getElementById('tanggal');
     const waktuSelect = document.getElementById('waktu');
     const availabilityMessage = document.getElementById('availability-message');
 
     function checkAvailability() {
-        const ruangan = ruanganSelect.value;
+        const lab_id = labSelect.value;
         const tanggal = tanggalInput.value;
         const waktu = waktuSelect.value;
 
-        if (ruangan && tanggal && waktu) {
-            fetch(`{{ route('mahasiswa.booking.check') }}?ruangan=${ruangan}&tanggal=${tanggal}&waktu=${waktu}`)
+        if (lab_id && tanggal && waktu) {
+            fetch(`{{ route('mahasiswa.booking.check') }}?lab_id=${lab_id}&tanggal=${tanggal}&waktu=${waktu}`)
                 .then(response => response.json())
                 .then(data => {
                     availabilityMessage.classList.remove('hidden');
@@ -94,7 +93,7 @@
         }
     }
 
-    ruanganSelect.addEventListener('change', checkAvailability);
+    labSelect.addEventListener('change', checkAvailability);
     tanggalInput.addEventListener('change', checkAvailability);
     waktuSelect.addEventListener('change', checkAvailability);
 </script>

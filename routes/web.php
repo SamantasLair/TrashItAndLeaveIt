@@ -2,29 +2,16 @@
 
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
-
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\BansusController;
 use App\Http\Controllers\BookingController;
 
-//Welcome
 Route::get('/welcome', function(){
     return view('welcome');
 });
 
-// Guest routes
 Route::middleware('guest')->group(function () {
     Route::get('/', function () {
         return redirect()->route('login');
@@ -39,7 +26,6 @@ Route::middleware('guest')->group(function () {
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// Mahasiswa routes
 Route::middleware(['auth', 'role:mahasiswa'])->prefix('mahasiswa')->group(function () {
     Route::get('/dashboard', [MahasiswaController::class, 'dashboard'])->name('mahasiswa.dashboard');
     Route::get('/booking/create', [BookingController::class, 'create'])->name('mahasiswa.booking.create');
@@ -49,11 +35,13 @@ Route::middleware(['auth', 'role:mahasiswa'])->prefix('mahasiswa')->group(functi
     Route::get('/booking/check-availability', [BookingController::class, 'checkAvailability'])->name('mahasiswa.booking.check');
 });
 
-// Bansus routes
 Route::middleware(['auth', 'role:bansus'])->prefix('bansus')->group(function () {
     Route::get('/dashboard', [BansusController::class, 'dashboard'])->name('bansus.dashboard');
     Route::get('/bookings', [BansusController::class, 'index'])->name('bansus.bookings.index');
     Route::get('/bookings/{booking}', [BansusController::class, 'show'])->name('bansus.bookings.show');
     Route::patch('/bookings/{booking}/approve', [BansusController::class, 'approve'])->name('bansus.bookings.approve');
     Route::patch('/bookings/{booking}/reject', [BansusController::class, 'reject'])->name('bansus.bookings.reject');
+    Route::delete('/bookings/{booking}', [BansusController::class, 'destroy'])->name('bansus.bookings.destroy');
+    
+    Route::resource('labs', \App\Http\Controllers\LabController::class)->names('admin.labs');
 });

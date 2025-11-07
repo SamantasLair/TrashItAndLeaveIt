@@ -1,8 +1,9 @@
 <?php
-// app/Http/Controllers/BansusController.php
+
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Lab;
 use Illuminate\Http\Request;
 
 class BansusController extends Controller
@@ -16,12 +17,12 @@ class BansusController extends Controller
             'rejected' => Booking::where('status', 'rejected')->count(),
         ];
 
-        $recentBookings = Booking::with('user')
+        $recentBookings = Booking::with('user', 'lab')
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
 
-        $todayBookings = Booking::with('user')
+        $todayBookings = Booking::with('user', 'lab')
             ->whereDate('tanggal', today())
             ->where('status', 'approved')
             ->orderBy('waktu')
@@ -32,14 +33,14 @@ class BansusController extends Controller
 
     public function index(Request $request)
     {
-        $query = Booking::with('user');
+        $query = Booking::with('user', 'lab');
 
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        if ($request->filled('ruangan')) {
-            $query->where('ruangan', $request->ruangan);
+        if ($request->filled('lab_id')) {
+            $query->where('lab_id', $request->lab_id);
         }
 
         if ($request->filled('tanggal')) {
@@ -49,13 +50,15 @@ class BansusController extends Controller
         $bookings = $query->orderBy('tanggal', 'desc')
             ->orderBy('created_at', 'desc')
             ->paginate(15);
+        
+        $labs = Lab::all();
 
-        return view('bansus.booking.index', compact('bookings'));
+        return view('bansus.booking.index', compact('bookings', 'labs'));
     }
 
     public function show(Booking $booking)
     {
-        $booking->load('user');
+        $booking->load('user', 'lab');
         return view('bansus.booking.show', compact('booking'));
     }
 
@@ -85,5 +88,11 @@ class BansusController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Booking berhasil ditolak!');
+    }
+
+    public function destroy(Booking $booking)
+    {
+        $booking->delete();
+        return redirect()->route('bansus.bookings.index')->with('success', 'Booking berhasil dihapus permanen.');
     }
 }

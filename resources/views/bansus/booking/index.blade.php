@@ -1,5 +1,3 @@
-
-{{-- resources/views/bansus/bookings/index.blade.php --}}
 @extends('layouts.dashboard')
 
 @section('title', 'Kelola Booking')
@@ -29,14 +27,14 @@
             </div>
 
             <div>
-                <label for="ruangan" class="block text-sm font-medium text-gray-700">Ruangan</label>
-                <select name="ruangan" id="ruangan" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                <label for="lab_id" class="block text-sm font-medium text-gray-700">Ruangan</label>
+                <select name="lab_id" id="lab_id" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     <option value="">Semua Ruangan</option>
-                    <option value="R1" {{ request('ruangan') === 'R1' ? 'selected' : '' }}>R1</option>
-                    <option value="R2" {{ request('ruangan') === 'R2' ? 'selected' : '' }}>R2</option>
-                    <option value="R3" {{ request('ruangan') === 'R3' ? 'selected' : '' }}>R3</option>
-                    <option value="R4" {{ request('ruangan') === 'R4' ? 'selected' : '' }}>R4</option>
-                    <option value="RPL" {{ request('ruangan') === 'RPL' ? 'selected' : '' }}>RPL</option>
+                    @foreach($labs as $lab)
+                        <option value="{{ $lab->id }}" {{ request('lab_id') == $lab->id ? 'selected' : '' }}>
+                            {{ $lab->nama }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
 
@@ -76,7 +74,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                                    {{ $booking->ruangan }}
+                                    {{ $booking->lab->nama ?? 'Lab Dihapus' }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -105,9 +103,16 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                <a href="{{ route('bansus.bookings.show', $booking) }}" class="text-blue-600 hover:text-blue-900">
+                                <a href="{{ route('bansus.bookings.show', $booking) }}" class="text-blue-600 hover:text-blue-900 mr-3">
                                     Detail
                                 </a>
+                                <form action="{{ route('bansus.bookings.destroy', $booking) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Apakah Anda yakin ingin menghapus booking ini?')">
+                                        Hapus
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     @empty

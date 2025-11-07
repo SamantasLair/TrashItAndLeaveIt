@@ -1,5 +1,3 @@
-
-{{-- resources/views/mahasiswa/dashboard.blade.php --}}
 @extends('layouts.dashboard')
 
 @section('title', 'Dashboard Mahasiswa')
@@ -57,7 +55,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                                    {{ $booking->ruangan }}
+                                    {{ $booking->lab->nama ?? 'Lab Dihapus' }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -92,8 +90,8 @@
                                     <form action="{{ route('mahasiswa.booking.destroy', $booking) }}" method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Yakin ingin menghapus booking ini?')">
-                                            Hapus
+                                        <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Yakin ingin membatalkan booking ini?')">
+                                            Batalkan
                                         </button>
                                     </form>
                                 @endif

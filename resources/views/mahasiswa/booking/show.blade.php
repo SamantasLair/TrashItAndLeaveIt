@@ -1,5 +1,3 @@
-
-{{-- resources/views/mahasiswa/booking/show.blade.php --}}
 @extends('layouts.dashboard')
 
 @section('title', 'Detail Booking')
@@ -34,7 +32,7 @@
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <div class="text-sm font-medium text-gray-500">Ruangan</div>
-                    <div class="mt-1 text-sm text-gray-900 font-semibold">{{ $booking->ruangan }}</div>
+                    <div class="mt-1 text-sm text-gray-900 font-semibold">{{ $booking->lab->nama ?? 'Lab Dihapus' }}</div>
                 </div>
                 <div>
                     <div class="text-sm font-medium text-gray-500">Tanggal</div>

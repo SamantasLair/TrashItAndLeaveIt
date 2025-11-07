@@ -12,19 +12,27 @@ class Booking extends Model
     protected $fillable = [
         'user_id',
         'lab_id',
-        'date',
-        'timeslot',
-        'purpose',
+        'hari',
+        'tanggal',
+        'waktu',
+        'keperluan',
         'status',
+        'catatan',
     ];
 
     protected $casts = [
-        'purpose' => 'encrypted',
+        'keperluan' => 'encrypted',
+        'tanggal' => 'datetime',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function lab()
+    {
+        return $this->belongsTo(Lab::class);
     }
 
     public function isPending()
