@@ -27,6 +27,15 @@ class DatabaseSeeder extends Seeder
             'jurusan' => 'Ilmu Komputer',
         ]);
 
+        User::create([
+            'name' => 'John Smith',
+            'email' => 'p@gmail.com',
+            'password' => Hash::make('password'),
+            'role' => 'mahasiswa',
+            'nim' => '2021002',
+            'jurusan' => 'Ilmu Komputer',
+        ]);
+
         Lab::create([
             'nama' => 'RPL',
             'kapasitas' => 30,

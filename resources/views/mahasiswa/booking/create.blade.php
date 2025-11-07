@@ -15,7 +15,7 @@
             <h3 class="text-lg font-semibold text-gray-900">Form Booking Laboratorium</h3>
         </div>
 
-        <form method="POST" action="{{ route('mahasiswa.booking.store') }}" class="p-6 space-y-6">
+        <form method="POST" action="{{ route('mahasiswa.booking.store') }}" class="p-6 space-y-6" id="booking-form" novalidate>
             @csrf
 
             <div>
@@ -32,8 +32,12 @@
 
             <div>
                 <label for="tanggal" class="block text-sm font-medium text-gray-700">Tanggal <span class="text-red-500">*</span></label>
-                <input type="date" name="tanggal" id="tanggal" value="{{ old('tanggal') }}" required min="{{ date('Y-m-d') }}" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                <input type="date" name="tanggal" id="tanggal" value="{{ old('tanggal') }}" 
+                       min="{{ date('Y-m-d') }}" 
+                       max="{{ date('Y-m-d', strtotime('+10 years')) }}" 
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                 <p class="mt-1 text-xs text-gray-500">Hanya hari Senin - Jumat</p>
+                <div id="tanggal-error" class="hidden mt-2 p-3 bg-red-50 border border-red-200 text-sm text-red-700 rounded-md"></div>
             </div>
 
             <div>
@@ -71,6 +75,9 @@
     const tanggalInput = document.getElementById('tanggal');
     const waktuSelect = document.getElementById('waktu');
     const availabilityMessage = document.getElementById('availability-message');
+    
+    const bookingForm = document.getElementById('booking-form');
+    const tanggalError = document.getElementById('tanggal-error');
 
     function checkAvailability() {
         const lab_id = labSelect.value;
@@ -96,5 +103,55 @@
     labSelect.addEventListener('change', checkAvailability);
     tanggalInput.addEventListener('change', checkAvailability);
     waktuSelect.addEventListener('change', checkAvailability);
+
+    tanggalInput.addEventListener('input', function() {
+        tanggalError.classList.add('hidden');
+        tanggalError.textContent = '';
+    });
+
+    bookingForm.addEventListener('submit', function(event) {
+        let isValid = true;
+        let errorMessage = '';
+        
+        const tanggalValue = tanggalInput.value;
+        const minDateStr = tanggalInput.getAttribute('min');
+        const maxDateStr = tanggalInput.getAttribute('max');
+
+        if (!tanggalValue) {
+            isValid = false;
+            errorMessage = 'Tanggal wajib diisi.';
+        } else {
+            const selectedDate = new Date(tanggalValue + 'T00:00:00');
+            const minDate = new Date(minDateStr + 'T00:00:00');
+            const maxDate = new Date(maxDateStr + 'T00:00:00');
+
+            if (selectedDate < minDate) {
+                isValid = false;
+                const minDateFormatted = new Date(minDateStr).toLocaleDateString('id-ID', {
+                    day: '2-digit', month: '2-digit', year: 'numeric'
+                });
+                errorMessage = 'Tanggal tidak boleh lebih awal dari hari ini (' + minDateFormatted + ').';
+            } else if (selectedDate > maxDate) {
+                isValid = false;
+                const maxDateFormatted = new Date(maxDateStr).toLocaleDateString('id-ID', {
+                    day: '2-digit', month: '2-digit', year: 'numeric'
+                });
+                errorMessage = 'Tanggal tidak boleh lebih dari ' + maxDateFormatted + '.';
+            }
+        }
+
+        if (!isValid) {
+            event.preventDefault();
+            tanggalError.textContent = errorMessage;
+            tanggalError.classList.remove('hidden');
+        } else {
+            tanggalError.classList.add('hidden');
+            tanggalError.textContent = '';
+        }
+        
+        if (!bookingForm.checkValidity()) {
+            event.preventDefault();
+        }
+    });
 </script>
 @endsection
