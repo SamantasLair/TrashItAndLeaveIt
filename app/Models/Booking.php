@@ -1,25 +1,25 @@
 <?php
 
-// app/Models/Booking.php
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Booking extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'user_id',
-        'ruangan',
-        'hari',
-        'waktu',
-        'tanggal',
-        'keperluan',
+        'lab_id',
+        'date',
+        'timeslot',
+        'purpose',
         'status',
-        'catatan',
     ];
 
     protected $casts = [
-        'tanggal' => 'date',
+        'purpose' => 'encrypted',
     ];
 
     public function user()
