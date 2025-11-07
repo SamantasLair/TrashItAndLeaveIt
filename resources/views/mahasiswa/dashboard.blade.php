@@ -6,9 +6,16 @@
 <div class="px-4 py-6 sm:px-0">
     <div class="mb-6 flex justify-between items-center">
         <h2 class="text-2xl font-bold text-gray-900">Dashboard Mahasiswa</h2>
-        <a href="{{ route('mahasiswa.booking.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg">
-            + Booking Baru
-        </a>
+        
+        <div class="flex space-x-2">
+            <a href="{{ route('mahasiswa.jadwal.index') }}" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg">
+                Lihat Jadwal Terisi
+            </a>
+            <a href="{{ route('mahasiswa.booking.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg">
+                + Booking Baru
+            </a>
+        </div>
+
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
@@ -87,10 +94,12 @@
                                     Detail
                                 </a>
                                 @if($booking->status === 'pending')
-                                    <form action="{{ route('mahasiswa.booking.destroy', $booking) }}" method="POST" class="inline">
+                                    <form id="cancel-form-{{ $booking->id }}" action="{{ route('mahasiswa.booking.destroy', $booking) }}" method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Yakin ingin membatalkan booking ini?')">
+                                        <button type="button" 
+                                                class="text-red-600 hover:text-red-900 open-cancel-modal-btn" 
+                                                data-form-id="cancel-form-{{ $booking->id }}">
                                             Batalkan
                                         </button>
                                     </form>
@@ -115,3 +124,78 @@
     </div>
 </div>
 @endsection
+
+<div id="cancel-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center" style="display: none; z-index: 50;">
+    <div class="relative mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+            </div>
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mt-4">Batalkan Booking?</h3>
+            <div class="mt-2 px-7 py-3">
+                <p class="text-sm text-gray-500">
+                    Apakah Anda yakin ingin membatalkan booking ini? Tindakan ini tidak dapat diurungkan.
+                </p>
+            </div>
+            <div class="items-center px-4 py-3 gap-2 flex justify-center">
+                <button id="cancel-modal-close-btn" type="button" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">
+                    Tidak
+                </button>
+                <button id="cancel-modal-confirm-btn" type="button" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                    Ya, Batalkan
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('cancel-modal');
+        const closeModalBtn = document.getElementById('cancel-modal-close-btn');
+        const confirmModalBtn = document.getElementById('cancel-modal-confirm-btn');
+        const openModalBtns = document.querySelectorAll('.open-cancel-modal-btn');
+
+        let formToSubmit = null;
+
+        openModalBtns.forEach(btn => {
+            btn.addEventListener('click', function () {
+                const formId = this.getAttribute('data-form-id');
+                formToSubmit = document.getElementById(formId);
+                if (modal) {
+                    modal.style.display = 'flex';
+                }
+            });
+        });
+
+        function closeModal() {
+            if (modal) {
+                modal.style.display = 'none';
+            }
+            formToSubmit = null;
+        }
+
+        if (closeModalBtn) {
+            closeModalBtn.addEventListener('click', closeModal);
+        }
+
+        if (confirmModalBtn) {
+            confirmModalBtn.addEventListener('click', function () {
+                if (formToSubmit) {
+                    formToSubmit.submit();
+                }
+                closeModal();
+            });
+        }
+
+        if (modal) {
+            modal.addEventListener('click', function (event) {
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+    });
+</script>

@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\BansusController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\JadwalController; // TAMBAHKAN INI
 
 Route::get('/welcome', function(){
     return view('welcome');
@@ -28,6 +29,10 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware(['auth', 'role:mahasiswa'])->prefix('mahasiswa')->group(function () {
     Route::get('/dashboard', [MahasiswaController::class, 'dashboard'])->name('mahasiswa.dashboard');
+    
+    // TAMBAHKAN ROUTE INI
+    Route::get('/jadwal', [JadwalController::class, 'index'])->name('mahasiswa.jadwal.index');
+
     Route::get('/booking/create', [BookingController::class, 'create'])->name('mahasiswa.booking.create');
     Route::post('/booking', [BookingController::class, 'store'])->name('mahasiswa.booking.store');
     Route::get('/booking/{booking}', [BookingController::class, 'show'])->name('mahasiswa.booking.show');
